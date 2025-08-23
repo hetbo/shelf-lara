@@ -1,4 +1,10 @@
 // Import each SVG and immediately export it with a clean name.
+export { default as ChevronRightIcon} from '../../svg/chevron-right.svg?react';
+export { default as FileIcon} from '../../svg/file-text.svg?react';
+
+
+
+
 export { default as ArchiveIcon } from '../../svg/archive.svg?react';
 export { default as RefreshIcon } from '../../svg/refresh.svg?react';
 export { default as FolderPlusIcon } from '../../svg/folder-plus.svg?react';
