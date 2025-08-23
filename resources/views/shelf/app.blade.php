@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-g">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laravel with React</title>
+    <title>Hetbo Shelf App</title>
 
     <!-- The Vite directive will handle CSS and JS inclusion -->
     @viteReactRefresh
