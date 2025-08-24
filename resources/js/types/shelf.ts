@@ -95,6 +95,10 @@ export interface ShelfState {
 
     renamingItem: { id: number; type: 'file' | 'folder' } | null;
 
+    clipboardItem: { id: number; type: 'file'; name: string } | null;
+    copyItem: (id: number, type: 'file', name: string) => void;
+    pasteItem: (destinationFolderId: number | null) => Promise<void>;
+
     // Actions
     loadRootFolders: () => Promise<void>;
     loadFolderChildren: (folderId: number) => Promise<void>;
@@ -109,4 +113,6 @@ export interface ShelfState {
     startRename: (item: { id: number; type: 'file' | 'folder' }) => void;
     cancelRename: () => void;
     confirmRename: (newName: string) => Promise<void>;
+    clearClipboard: () => void;
+
 }

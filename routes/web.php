@@ -44,4 +44,6 @@ Route::prefix('api')->middleware(['web'])->group(function () {
     Route::patch('/rename/{type}/{id}', [ShelfController::class, 'rename'])
         ->whereIn('type', ['file', 'folder']);
 
+    Route::post('/files/copy', [FileController::class, 'copy']);
+
 });

@@ -6,6 +6,7 @@ use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -64,6 +65,47 @@ class FileController extends Controller
             'modifiedAt' => $file->updated_at->toISOString(),
         ]);
     }
+
+    public function copy(Request $request)
+    {
+        $request->validate([
+            'fileId' => 'required|exists:files,id',
+            'destinationFolderId' => 'nullable|exists:folders,id',
+        ]);
+
+        $originalFile = File::findOrFail($request->fileId);
+
+        // Create the copy
+        $copy = $originalFile->replicate();
+        $copy->folder_id = $request->destinationFolderId;
+
+        // Handle duplicate names
+        $baseName = pathinfo($copy->filename, PATHINFO_FILENAME);
+        $extension = pathinfo($copy->filename, PATHINFO_EXTENSION);
+        $counter = 1;
+
+        while (File::where('folder_id', $copy->folder_id)
+            ->where('filename', $copy->filename)
+            ->exists()) {
+            $copy->filename = $baseName . " (Copy " . $counter . ")" . ($extension ? ".$extension" : "");
+            $counter++;
+        }
+
+        // Copy the actual file in storage
+        $originalPath = $originalFile->path;
+        $newPath = 'copies/' . uniqid() . '_' . $copy->filename;
+
+        if (Storage::disk($originalFile->disc)->exists($originalPath)) {
+            Storage::disk($originalFile->disc)->copy($originalPath, $newPath);
+            $copy->path = $newPath;
+            $copy->hash = hash_file('sha256', Storage::disk($originalFile->disc)->path($newPath));
+        }
+
+        $copy->save();
+
+        return response()->json(['message' => 'File copied successfully']);
+    }
+
 
     // Future methods (commented out for now)
 

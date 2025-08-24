@@ -83,3 +83,21 @@ export const renameItem = (id: number, type: 'file' | 'folder', newName: string)
         body: JSON.stringify({ name: newName }),
     }).then(res => handleResponse(res, `Failed to rename ${type}`));
 };
+
+export const copyFile = (fileId: number, destinationFolderId: number | null): Promise<void> => {
+    const csrfMeta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
+    const csrfToken = csrfMeta?.getAttribute('content') ?? '';
+
+    return fetch(`${API_BASE}/files/copy`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+        },
+        body: JSON.stringify({
+            fileId,
+            destinationFolderId
+        }),
+    }).then(res => handleResponse(res, 'Failed to copy file'));
+};

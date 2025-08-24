@@ -42,6 +42,7 @@ export const useShelfStore = create<ShelfState>()(
             selectedFileDetails: null,
             isLoadingDetails: false,
             renamingItem: null,
+            clipboardItem: null,
 
             // --- REFACTORED ACTIONS ---
 
@@ -273,6 +274,30 @@ export const useShelfStore = create<ShelfState>()(
                     console.error("Failed to rename item:", error);
                     // Here you would trigger a UI notification to inform the user of the failure.
                 }
+            },
+            copyItem: (id: number, type: 'file', name: string) => {
+                set({ clipboardItem: { id, type, name } });
+            },
+
+            pasteItem: async (destinationFolderId: number | null) => {
+                const { clipboardItem } = get();
+                if (!clipboardItem) return;
+
+                try {
+                    await shelfApi.copyFile(clipboardItem.id, destinationFolderId);
+
+                    // Refresh current folder content to show the new file
+                    await get().loadFolderContent(destinationFolderId);
+
+                    // Clear clipboard after successful paste
+                    set({ clipboardItem: null });
+                } catch (error) {
+                    console.error('Failed to paste file:', error);
+                }
+            },
+
+            clearClipboard: () => {
+                set({ clipboardItem: null });
             },
         })
 );
