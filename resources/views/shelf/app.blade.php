@@ -8,6 +8,8 @@
     <!-- The Vite directive will handle CSS and JS inclusion -->
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+
+    <meta name="csrf-token" content="{{csrf_token()}}"/>
 </head>
 <body class="font-sans antialiased bg-gray-100">
 <div id="app"></div>

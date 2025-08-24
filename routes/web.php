@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FolderController;
+use App\Http\Controllers\ShelfController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,5 +40,8 @@ Route::prefix('api')->middleware(['web'])->group(function () {
         // Route::delete('/{file}', [FileController::class, 'destroy'])->name('api.files.destroy');
         // Route::get('/{file}/download', [FileController::class, 'download'])->name('api.files.download');
     });
+
+    Route::patch('/rename/{type}/{id}', [ShelfController::class, 'rename'])
+        ->whereIn('type', ['file', 'folder']);
 
 });
