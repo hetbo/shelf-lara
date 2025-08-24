@@ -101,3 +101,28 @@ export const copyFile = (fileId: number, destinationFolderId: number | null): Pr
         }),
     }).then(res => handleResponse(res, 'Failed to copy file'));
 };
+
+export const moveItem = (
+    id: number,
+    type: 'file' | 'folder',
+    destinationId: number | null
+): Promise<void> => {
+    // Get the CSRF token from the meta tag in your Blade layout
+    const csrfMeta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
+    const csrfToken = csrfMeta?.getAttribute('content') ?? '';
+
+    return fetch(`${API_BASE}/move`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+        },
+        // The body contains all the necessary information for the controller
+        body: JSON.stringify({
+            id,
+            type,
+            destination_id: destinationId // Use snake_case to match Laravel's request validation
+        }),
+    }).then(res => handleResponse(res, `Failed to move ${type}`));
+};

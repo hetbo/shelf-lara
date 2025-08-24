@@ -277,7 +277,7 @@ export const useShelfStore = create<ShelfState>()(
                     // Here you would trigger a UI notification to inform the user of the failure.
                 }
             },
-            copyItem: (id: number, type: 'file', name: string) => {
+/*            copyItem: (id: number, type: 'file', name: string) => {
                 set({ clipboardItem: { id, type, name } });
             },
 
@@ -296,7 +296,51 @@ export const useShelfStore = create<ShelfState>()(
                 } catch (error) {
                     console.error('Failed to paste file:', error);
                 }
+            },*/
+            copyItem: (id, type, name) => {
+                set({ clipboardItem: { id, type, name, mode: 'copy' } });
             },
+
+            // ADD the new cutItem action
+            cutItem: (id, type, name) => {
+                set({ clipboardItem: { id, type, name, mode: 'cut' } });
+            },
+
+            // MODIFY the pasteItem action to be smarter
+            pasteItem: async (destinationFolderId: number | null) => {
+                const { clipboardItem, loadFolderContent, loadRootFolders, currentFolderId } = get();
+                if (!clipboardItem) return;
+
+                const originalFolderId = currentFolderId; // Remember where we came from for cut operations
+
+                try {
+                    if (clipboardItem.mode === 'copy') {
+                        // This part is your existing copy logic
+                        await shelfApi.copyFile(clipboardItem.id, destinationFolderId);
+                    } else if (clipboardItem.mode === 'cut') {
+                        // This is the new move logic
+                        await shelfApi.moveItem(clipboardItem.id, clipboardItem.type, destinationFolderId);
+                    }
+
+                    // Refresh the destination folder to show the new item
+                    await loadFolderContent(destinationFolderId);
+
+                    // If it was a 'cut', we also need to refresh the source folder
+                    if (clipboardItem.mode === 'cut' && originalFolderId !== destinationFolderId) {
+                        await loadFolderContent(originalFolderId);
+                        // Also refresh the root tree if a folder was moved
+                        if (clipboardItem.type === 'folder') {
+                            await loadRootFolders();
+                        }
+                    }
+
+                    // Clear clipboard after any successful paste
+                    set({ clipboardItem: null });
+                } catch (error) {
+                    console.error(`Failed to paste item in ${clipboardItem.mode} mode:`, error);
+                }
+            },
+
 
             clearClipboard: () => {
                 set({ clipboardItem: null });

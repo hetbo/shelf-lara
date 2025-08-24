@@ -15,6 +15,7 @@ const DetailsPanel: React.FC = () => {
         startRename,
         clipboardItem,
         copyItem,
+        cutItem,
         pasteItem,
         currentFolderId
     } = useShelfStore();
@@ -152,13 +153,13 @@ const DetailsPanel: React.FC = () => {
                                 selectedFileId ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
                             }`}
                         >
-                            <Icon name="copy" className="w-4 h-4 mr-2" />
+                            <Icon name="copy" className="w-4 h-4 mr-2"/>
                             Copy
                         </button>
 
                         {clipboardItem && (
                             <button
-                                onClick={() => pasteItem(currentFolderId)}  // Use currentFolderId instead of selectedFolderId
+                                onClick={() => pasteItem(currentFolderId)}
                                 className="w-full text-left px-2 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded flex items-center"
                             >
                                 <Icon name="clipboard" className="w-4 h-4 mr-2" />
@@ -166,7 +167,12 @@ const DetailsPanel: React.FC = () => {
                             </button>
                         )}
                         <button
-                            className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded flex items-center">
+                            onClick={() => selectedFileId && selectedFileDetails && cutItem(selectedFileId, 'file', selectedFileDetails.name)}
+                            disabled={!selectedFileId}
+                            className={`w-full text-left px-2 py-1 text-sm rounded flex items-center ${
+                                selectedFileId ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
+                            }`}
+                        >
                             <Icon name="move" className="w-4 h-4 mr-2"/>
                             Move
                         </button>

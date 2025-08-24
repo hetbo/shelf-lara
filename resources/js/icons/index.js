@@ -21,5 +21,6 @@ export { default as music } from '../../svg/music.svg?react';
 export { default as move } from '../../svg/move.svg?react';
 export { default as fileText } from '../../svg/file-text.svg?react';
 export { default as fileSpreadsheet } from '../../svg/file-spreadsheet.svg?react';
+export { default as clipboard } from '../../svg/clipboard.svg?react';
 
 

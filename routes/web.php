@@ -45,5 +45,6 @@ Route::prefix('api')->middleware(['web'])->group(function () {
         ->whereIn('type', ['file', 'folder']);
 
     Route::post('/files/copy', [FileController::class, 'copy']);
+    Route::post('/move', [ShelfController::class, 'move']);
 
 });

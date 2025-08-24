@@ -70,6 +70,13 @@ export interface FolderContent {
     files: File[];
 }
 
+export interface ClipboardItem {
+    id: number;
+    type: 'file' | 'folder'; // Allow folders to be cut/copied
+    name: string;
+    mode: 'copy' | 'cut'; // This is the key change
+}
+
 export interface ShelfState {
     // Folder Tree State
     rootFolders: Folder[];
@@ -95,9 +102,16 @@ export interface ShelfState {
 
     renamingItem: { id: number; type: 'file' | 'folder' } | null;
 
-    clipboardItem: { id: number; type: 'file'; name: string } | null;
-    copyItem: (id: number, type: 'file', name: string) => void;
+
+    // clipboardItem: { id: number; type: 'file'; name: string } | null;
+
+    clipboardItem: ClipboardItem | null;
+    // copyItem: (id: number, type: 'file', name: string) => void;
+    // pasteItem: (destinationFolderId: number | null) => Promise<void>;
+    copyItem: (id: number, type: 'file' | 'folder', name: string) => void;
+    cutItem: (id: number, type: 'file' | 'folder', name: string) => void;
     pasteItem: (destinationFolderId: number | null) => Promise<void>;
+
 
     currentFolderId: number | null;
 
