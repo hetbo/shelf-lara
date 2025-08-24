@@ -103,6 +103,13 @@ class ShelfController extends Controller {
                     return response()->json(['message' => 'Invalid move operation. Cannot move a folder into one of its own subfolders.'], 409);
                 }
 
+                $originalName = $folder->name;
+                $counter = 1;
+                while (Folder::where('parent_id', $destinationId)->where('name', $folder->name)->exists()) {
+                    $folder->name = $originalName . ' (' . $counter . ')';
+                    $counter++;
+                }
+
                 $folder->parent_id = $destinationId;
                 $folder->save();
             }
@@ -175,6 +182,20 @@ class ShelfController extends Controller {
         }
 
         DB::beginTransaction();
+
+        $destinationChildren = Folder::where('parent_id', $destinationFolderId)->pluck('name');
+        $originalName = $originalFolder->name;
+        $newName = $originalName;
+        $counter = 1;
+
+        while ($destinationChildren->contains($newName)) {
+            $newName = $originalName . ' (' . $counter . ')';
+            $counter++;
+        }
+
+        if ($newName !== $originalName) {
+            $originalFolder->name = $newName;
+        }
 
         try {
             // Start the recursive copy process

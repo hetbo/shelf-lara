@@ -3,7 +3,6 @@ import {ShelfState, Folder} from '../types/shelf';
 // 1. Import all our new API functions
 import * as shelfApi from '../services/shelfApi';
 
-// Helper function remains unchanged as it's pure state logic
 const insertFolderChildren = (folders: Folder[], parentId: number, children: Folder[]): Folder[] => {
     return folders.map(folder => {
         if (folder.id === parentId) {
@@ -47,7 +46,7 @@ export const useShelfStore = create<ShelfState>()(
 
         // --- REFACTORED ACTIONS ---
 
-        loadRootFolders: async () => {
+/*        loadRootFolders: async () => {
             set({isLoadingFolders: true});
             try {
                 // 2. Call the API service instead of fetch
@@ -56,6 +55,29 @@ export const useShelfStore = create<ShelfState>()(
                     rootFolders: rootFoldersData.map(folder => ({...folder, isLoaded: false})),
                     isLoadingFolders: false
                 });
+            } catch (error) {
+                console.error(error);
+                set({isLoadingFolders: false});
+            }
+        },*/
+        loadRootFolders: async () => {
+            set({isLoadingFolders: true});
+            try {
+                // Store currently expanded folders before refreshing
+                const {expandedFolders} = get();
+                const expandedIds = Array.from(expandedFolders);
+
+                // Call the API service to get fresh root data
+                const rootFoldersData = await shelfApi.fetchRootFolders();
+                set({
+                    rootFolders: rootFoldersData.map(folder => ({...folder, isLoaded: false})),
+                    isLoadingFolders: false
+                });
+
+                // Re-expand previously expanded folders
+                for (const folderId of expandedIds) {
+                    await get().loadFolderChildren(folderId);
+                }
             } catch (error) {
                 console.error(error);
                 set({isLoadingFolders: false});
@@ -296,11 +318,50 @@ export const useShelfStore = create<ShelfState>()(
             try {
                 if (clipboardItem.mode === 'copy') {
                     // This part is your existing copy logic
+                    if (clipboardItem.type === 'file') {
+                        await shelfApi.copyFile(clipboardItem.id, destinationFolderId);
+                    } else {
+                        await shelfApi.copyFolder(clipboardItem.id, destinationFolderId);
+                    }
+                } else if (clipboardItem.mode === 'cut') {
+                    // This is the new move logic
+                    await shelfApi.moveItem(clipboardItem.id, clipboardItem.type, destinationFolderId);
+                }
+
+                // Refresh the destination folder to show the new item
+                await loadFolderContent(destinationFolderId);
+
+                // If it was a 'cut', we also need to refresh the source folder
+                if (clipboardItem.mode === 'cut' && originalFolderId !== destinationFolderId) {
+                    await loadFolderContent(originalFolderId);
+                }
+
+                // If a folder was copied or moved, we MUST refresh the tree structure
+                if (clipboardItem.type === 'folder') {
+                    await loadRootFolders();
+                }
+
+                // Clear clipboard after any successful paste
+                set({clipboardItem: null});
+            } catch (error) {
+                console.error(`Failed to paste item in ${clipboardItem.mode} mode:`, error);
+            }
+        }
+/*        pasteItem: async (destinationFolderId: number | null) => {
+            const {clipboardItem, loadFolderContent, loadRootFolders, currentFolderId} = get();
+            if (!clipboardItem) return;
+
+            const originalFolderId = currentFolderId; // Remember where we came from for cut operations
+
+            try {
+                if (clipboardItem.mode === 'copy') {
+                    // This part is your existing copy logic
 //                        await shelfApi.copyFile(clipboardItem.id, destinationFolderId);
                     if (clipboardItem.type === 'file') {
                         await shelfApi.copyFile(clipboardItem.id, destinationFolderId);
                     } else {
                         await shelfApi.copyFolder(clipboardItem.id, destinationFolderId);
+                        await loadRootFolders();
                     }
                 } else if (clipboardItem.mode === 'cut') {
                     // This is the new move logic
@@ -334,7 +395,7 @@ export const useShelfStore = create<ShelfState>()(
             } catch (error) {
                 console.error(`Failed to paste item in ${clipboardItem.mode} mode:`, error);
             }
-        },
+        }*/,
 
 
         clearClipboard: () => {
