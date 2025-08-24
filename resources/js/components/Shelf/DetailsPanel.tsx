@@ -62,29 +62,27 @@ const DetailsPanel: React.FC = () => {
                         </div>
 
                         <div className="space-y-3">
+
                             <div>
                                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                                     Name
                                 </label>
-                                <div onDoubleClick={() => startRename(currentItem as {
-                                    id: number;
-                                    type: 'file' | 'folder'
-                                })}>
+                                <div
+                                    onDoubleClick={() => startRename(currentItem as {
+                                        id: number;
+                                        type: 'file' | 'folder'
+                                    })}
+                                    className="cursor-pointer"
+                                >
                                     {isRenaming ? (
-                                        <RenameForm initialName={currentItem.name || ''}/>
+                                        <RenameForm initialName={currentItem.name || ''} itemType={currentItem.type as 'file' | 'folder'}/>
                                     ) : (
                                         <p className="text-sm text-gray-800">
                                             {currentItem.name || '-'}
                                         </p>
                                     )}
                                 </div>
-                                {/*
-                                <p className="text-sm text-gray-800">
-                                    {(selectedFolderId ? selectedFolderDetails?.name : selectedFileDetails?.name) || '-'}
-                                </p>
-*/}
                             </div>
-
                             <div>
                                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                                     Type
@@ -95,7 +93,7 @@ const DetailsPanel: React.FC = () => {
                             </div>
 
                             <div>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                                     Size
                                 </label>
                                 <p className="text-sm text-gray-800">
@@ -136,20 +134,26 @@ const DetailsPanel: React.FC = () => {
                         Actions
                     </h4>
                     <div className="space-y-2">
-                        <button className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded flex items-center">
-                            <Icon name="edit" className="w-4 h-4 mr-2" />
+                        <button
+                            onClick={() => startRename(currentItem as { id: number; type: 'file' | 'folder' })}
+                            className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded flex items-center"
+                        >
+                            <Icon name="edit" className="w-4 h-4 mr-2"/>
                             Rename
                         </button>
-                        <button className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded flex items-center">
-                            <Icon name="copy" className="w-4 h-4 mr-2" />
+                        <button
+                            className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded flex items-center">
+                            <Icon name="copy" className="w-4 h-4 mr-2"/>
                             Copy
                         </button>
-                        <button className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded flex items-center">
-                            <Icon name="move" className="w-4 h-4 mr-2" />
+                        <button
+                            className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded flex items-center">
+                            <Icon name="move" className="w-4 h-4 mr-2"/>
                             Move
                         </button>
-                        <button className="w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded flex items-center">
-                            <Icon name="trash" className="w-4 h-4 mr-2" />
+                        <button
+                            className="w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded flex items-center">
+                            <Icon name="trash" className="w-4 h-4 mr-2"/>
                             Delete
                         </button>
                     </div>
