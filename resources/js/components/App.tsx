@@ -1,7 +1,6 @@
 import React from 'react';
 import {ConfigProvider} from "antd";
-import Home from "./pages/Home";
-import TreePage from "../pages/TreePage";
+import Shelf from "./Shelf/Shelf";
 
 function App(): React.ReactElement {
     return (
@@ -12,7 +11,9 @@ function App(): React.ReactElement {
                 }
             }}
         >
-            <TreePage />
+            <div className="antialiased">
+                <Shelf/>
+            </div>
         </ConfigProvider>
     );
 }

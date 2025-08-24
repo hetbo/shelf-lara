@@ -9,8 +9,7 @@
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
-<body>
-<!-- This is the root element where our React app will be mounted -->
+<body class="font-sans antialiased bg-gray-100">
 <div id="app"></div>
 </body>
 </html>
