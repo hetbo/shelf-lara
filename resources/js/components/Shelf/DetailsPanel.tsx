@@ -1,6 +1,8 @@
 import React from 'react';
 import { useShelfStore } from '../../store/shelf';
 import Icon from '../../icons/Icon';
+import {RenameForm} from "./RenameForm";
+
 
 const DetailsPanel: React.FC = () => {
     const {
@@ -8,8 +10,17 @@ const DetailsPanel: React.FC = () => {
         selectedFileId,
         selectedFolderDetails,
         selectedFileDetails,
-        isLoadingDetails
+        isLoadingDetails,
+        renamingItem,
+        startRename
     } = useShelfStore();
+
+    const currentItem = selectedFolderId
+        ? { id: selectedFolderId, type: 'folder', name: selectedFolderDetails?.name }
+        : { id: selectedFileId, type: 'file', name: selectedFileDetails?.name };
+
+    const isRenaming = renamingItem?.id === currentItem.id && renamingItem?.type === currentItem.type;
+
 
     if (!selectedFolderId && !selectedFileId) {
         return (
@@ -55,9 +66,23 @@ const DetailsPanel: React.FC = () => {
                                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                                     Name
                                 </label>
+                                <div onDoubleClick={() => startRename(currentItem as {
+                                    id: number;
+                                    type: 'file' | 'folder'
+                                })}>
+                                    {isRenaming ? (
+                                        <RenameForm initialName={currentItem.name || ''}/>
+                                    ) : (
+                                        <p className="text-sm text-gray-800">
+                                            {currentItem.name || '-'}
+                                        </p>
+                                    )}
+                                </div>
+                                {/*
                                 <p className="text-sm text-gray-800">
                                     {(selectedFolderId ? selectedFolderDetails?.name : selectedFileDetails?.name) || '-'}
                                 </p>
+*/}
                             </div>
 
                             <div>
@@ -70,7 +95,7 @@ const DetailsPanel: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                                     Size
                                 </label>
                                 <p className="text-sm text-gray-800">
@@ -105,62 +130,6 @@ const DetailsPanel: React.FC = () => {
                         </div>
                     </div>
                 )}
-
-{/*
-                <div className="space-y-4">
-                    <div className="text-center mb-6">
-                        <div className="w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <Icon
-                                name={selectedFolderId ? "folder" : "file"}
-                                className="w-8 h-8 text-gray-600"
-                            />
-                        </div>
-                        <p className="text-sm font-medium text-gray-800">
-                            {selectedFolderId ? "Folder Selected" : "File Selected"}
-                        </p>
-                    </div>
-
-                     Placeholder content
-                    <div className="space-y-3">
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                Name
-                            </label>
-                            <p className="text-sm text-gray-800">-</p>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                Type
-                            </label>
-                            <p className="text-sm text-gray-800">
-                                {selectedFolderId ? "Folder" : "File"}
-                            </p>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                Size
-                            </label>
-                            <p className="text-sm text-gray-800">-</p>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                Modified
-                            </label>
-                            <p className="text-sm text-gray-800">-</p>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                Created
-                            </label>
-                            <p className="text-sm text-gray-800">-</p>
-                        </div>
-                    </div>
-                </div>
-*/}
 
                 <div className="mt-6 pt-4 border-t border-gray-200">
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
