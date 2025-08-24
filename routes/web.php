@@ -47,4 +47,7 @@ Route::prefix('api')->middleware(['web'])->group(function () {
     Route::post('/files/copy', [FileController::class, 'copy']);
     Route::post('/move', [ShelfController::class, 'move']);
     Route::post('/folders/copy', [ShelfController::class, 'copyFolder']);
+
+    Route::delete('/delete/{type}/{id}', [ShelfController::class, 'delete'])
+        ->whereIn('type', ['file', 'folder']);
 });

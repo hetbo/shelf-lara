@@ -232,5 +232,4 @@ class FolderController extends Controller
             'modifiedAt' => $folder->updated_at->toISOString(),
         ]);
     }
-
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Models\Folder;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -119,7 +121,7 @@ class ShelfController extends Controller {
 
             return response()->json(['message' => ucfirst($type) . ' moved successfully.']);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // If any error occurred, roll back all database changes.
             DB::rollBack();
 
@@ -205,7 +207,7 @@ class ShelfController extends Controller {
 
             return response()->json(['message' => 'Folder and all its contents copied successfully.']);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Folder copy failed: ' . $e->getMessage());
 
@@ -280,6 +282,56 @@ class ShelfController extends Controller {
         }
 
         return $folderCopy;
+    }
+
+    public function delete(string $type, int $id): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            if ($type === 'file') {
+                $file = File::findOrFail($id);
+                if (Storage::disk($file->disc)->exists($file->path)) {
+                    Storage::disk($file->disc)->delete($file->path);
+                }
+                $file->delete();
+            } elseif ($type === 'folder') {
+                $folder = Folder::findOrFail($id);
+
+                $this->deleteFolderRecursive($folder);
+            }
+
+            DB::commit();
+            return response()->json(['message' => ucfirst($type) . ' deleted successfully.']);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Delete operation failed: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred during the delete operation.'], 500);
+        }
+    }
+
+    /**
+     * A private helper to recursively soft delete a folder's contents.
+     *
+     * @param Folder $folder
+     */
+    private function deleteFolderRecursive(Folder $folder)
+    {
+        // Recursively delete all children folders first
+        foreach ($folder->children as $child) {
+            $this->deleteFolderRecursive($child);
+        }
+
+        // Delete all files within this folder
+        foreach ($folder->files as $file) {
+            if (Storage::disk($file->disc)->exists($file->path)) {
+                Storage::disk($file->disc)->delete($file->path);
+            }
+            $file->delete();
+        }
+
+        // Finally, delete the folder itself
+        $folder->delete();
     }
 
 

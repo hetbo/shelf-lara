@@ -125,5 +125,6 @@ export interface ShelfState {
     cancelRename: () => void;
     confirmRename: (newName: string) => Promise<void>;
     clearClipboard: () => void;
+    deleteItem: (item: { id: number; type: 'file' | 'folder' }) => Promise<void>;
 
 }

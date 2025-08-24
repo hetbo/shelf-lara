@@ -17,7 +17,8 @@ const DetailsPanel: React.FC = () => {
         copyItem,
         cutItem,
         pasteItem,
-        currentFolderId
+        currentFolderId,
+        deleteItem
     } = useShelfStore();
 
     const currentItem = selectedFolderId
@@ -195,7 +196,25 @@ const DetailsPanel: React.FC = () => {
                             Cut / Move
                         </button>
                         <button
-                            className="w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded flex items-center">
+                            // --- ADD THIS ONCLICK HANDLER ---
+                            onClick={() => {
+                                // 1. Ask for confirmation
+                                if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+                                    if (selectedFileId) {
+                                        deleteItem({id: selectedFileId, type: 'file'});
+                                    } else if (selectedFolderId) {
+                                        deleteItem({id: selectedFolderId, type: 'folder'});
+                                    }
+                                }
+                            }}
+                            // --- ADD A DISABLED CHECK ---
+                            disabled={!selectedFileId && !selectedFolderId}
+                            className={`w-full text-left px-2 py-1 text-sm rounded flex items-center ${
+                                (selectedFileId || selectedFolderId)
+                                    ? 'text-red-600 hover:bg-red-50'
+                                    : 'text-gray-400 cursor-not-allowed'
+                            }`}
+                        >
                             <Icon name="trash" className="w-4 h-4 mr-2"/>
                             Delete
                         </button>

@@ -346,60 +346,57 @@ export const useShelfStore = create<ShelfState>()(
             } catch (error) {
                 console.error(`Failed to paste item in ${clipboardItem.mode} mode:`, error);
             }
-        }
-/*        pasteItem: async (destinationFolderId: number | null) => {
-            const {clipboardItem, loadFolderContent, loadRootFolders, currentFolderId} = get();
-            if (!clipboardItem) return;
-
-            const originalFolderId = currentFolderId; // Remember where we came from for cut operations
-
-            try {
-                if (clipboardItem.mode === 'copy') {
-                    // This part is your existing copy logic
-//                        await shelfApi.copyFile(clipboardItem.id, destinationFolderId);
-                    if (clipboardItem.type === 'file') {
-                        await shelfApi.copyFile(clipboardItem.id, destinationFolderId);
-                    } else {
-                        await shelfApi.copyFolder(clipboardItem.id, destinationFolderId);
-                        await loadRootFolders();
-                    }
-                } else if (clipboardItem.mode === 'cut') {
-                    // This is the new move logic
-                    await shelfApi.moveItem(clipboardItem.id, clipboardItem.type, destinationFolderId);
-                }
-
-                // Refresh the destination folder to show the new item
-                await loadFolderContent(destinationFolderId);
-
-                // If it was a 'cut', we also need to refresh the source folder
-                if (clipboardItem.mode === 'cut' && originalFolderId !== destinationFolderId) {
-                    await loadFolderContent(originalFolderId);
-                    // Also refresh the root tree if a folder was moved
-                    if (clipboardItem.type === 'folder') {
-                        await loadRootFolders();
-                    }
-                }
-
-                await loadFolderContent(destinationFolderId);
-                if (originalFolderId !== destinationFolderId) {
-                    await loadFolderContent(originalFolderId);
-                }
-
-                // 2. ADD THIS: If a folder was moved, we MUST refresh the tree structure
-                if (clipboardItem.type === 'folder') {
-                    await loadRootFolders();
-                }
-
-                // Clear clipboard after any successful paste
-                set({clipboardItem: null});
-            } catch (error) {
-                console.error(`Failed to paste item in ${clipboardItem.mode} mode:`, error);
-            }
-        }*/,
+        },
 
 
         clearClipboard: () => {
             set({clipboardItem: null});
+        },
+
+
+        deleteItem: async (item: { id: number; type: 'file' | 'folder' }) => {
+
+            const {
+                currentFolderContent,
+                rootFolders,
+                loadFolderContent,
+                loadRootFolders,
+                selectFolder // We need this to change the view
+            } = get();
+
+
+            let parentFolderId: number | null = null;
+
+            if (item.type === 'file') {
+
+                const file = currentFolderContent.files.find(f => f.id === item.id);
+                parentFolderId = file?.folder_id ?? null;
+            } else if (item.type === 'folder') {
+
+                const findFolder = (folders: Folder[], targetId: number): Folder | null => {
+                    for (const folder of folders) {
+                        if (folder.id === targetId) return folder;
+                        if (folder.children) {
+                            const result = findFolder(folder.children, targetId);
+                            if (result) return result;
+                        }
+                    }
+                    return null;
+                };
+                const folder = findFolder(rootFolders, item.id);
+                parentFolderId = folder?.parent_id ?? null;
+            }
+
+            try {
+                await shelfApi.deleteItem(item.id, item.type);
+
+                selectFolder(parentFolderId);
+
+                await loadRootFolders();
+
+            } catch (error) {
+                console.error("Delete action failed:", error);
+            }
         },
     })
 );
