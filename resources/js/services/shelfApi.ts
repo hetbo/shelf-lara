@@ -2,17 +2,39 @@ import { Folder, FolderContent, BreadcrumbItem, FolderDetails, FileDetails } fro
 
 const API_BASE = '/api';
 
-/**
- * A helper to handle fetch responses and errors consistently.
- * @param response The fetch Response object.
- * @param errorMessage The error message to throw if the response is not ok.
- */
+/*
 const handleResponse = async (response: Response, errorMessage: string) => {
     if (!response.ok) {
         // You could add more sophisticated error handling here, like logging the status code
         throw new Error(errorMessage);
     }
     return response.json();
+};
+*/
+
+const handleResponse = async (response: Response, defaultErrorMessage: string) => {
+    if (response.ok) {
+        if (response.headers.get('Content-Length') === '0') {
+            return Promise.resolve(null);
+        }
+        return response.json();
+    }
+
+    // --- THIS IS THE NEW PART ---
+    try {
+        const errorData = await response.json();
+        const message = errorData.message || defaultErrorMessage;
+
+        // Dispatch a global event with the error message
+        window.dispatchEvent(new CustomEvent('api-error', { detail: { message } }));
+
+        throw new Error(message);
+    } catch (e) {
+        // Fallback for non-json errors
+        window.dispatchEvent(new CustomEvent('api-error', { detail: { message: defaultErrorMessage } }));
+        throw new Error(defaultErrorMessage);
+    }
+    // --- END OF NEW PART ---
 };
 
 /**

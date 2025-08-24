@@ -334,6 +334,16 @@ export const useShelfStore = create<ShelfState>()(
                         }
                     }
 
+                    await loadFolderContent(destinationFolderId);
+                    if (originalFolderId !== destinationFolderId) {
+                        await loadFolderContent(originalFolderId);
+                    }
+
+                    // 2. ADD THIS: If a folder was moved, we MUST refresh the tree structure
+                    if (clipboardItem.type === 'folder') {
+                        await loadRootFolders();
+                    }
+
                     // Clear clipboard after any successful paste
                     set({ clipboardItem: null });
                 } catch (error) {

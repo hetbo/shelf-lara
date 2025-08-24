@@ -162,19 +162,28 @@ const DetailsPanel: React.FC = () => {
                                 onClick={() => pasteItem(currentFolderId)}
                                 className="w-full text-left px-2 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded flex items-center"
                             >
-                                <Icon name="clipboard" className="w-4 h-4 mr-2" />
+                                <Icon name="clipboard" className="w-4 h-4 mr-2"/>
                                 Paste "{clipboardItem.name}"
                             </button>
                         )}
                         <button
-                            onClick={() => selectedFileId && selectedFileDetails && cutItem(selectedFileId, 'file', selectedFileDetails.name)}
-                            disabled={!selectedFileId}
+                            onClick={() => {
+                                // This logic now checks for either a selected file OR a selected folder
+                                if (selectedFileId && selectedFileDetails) {
+                                    cutItem(selectedFileId, 'file', selectedFileDetails.name);
+                                } else if (selectedFolderId && selectedFolderDetails) {
+                                    cutItem(selectedFolderId, 'folder', selectedFolderDetails.name);
+                                }
+                            }}
+                            // The button is now disabled only if NEITHER a file NOR a folder is selected
+                            disabled={!selectedFileId && !selectedFolderId}
                             className={`w-full text-left px-2 py-1 text-sm rounded flex items-center ${
-                                selectedFileId ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
+                                (selectedFileId || selectedFolderId) ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
                             }`}
+                            title="Cut item to clipboard" // The functionality is "cut"
                         >
                             <Icon name="move" className="w-4 h-4 mr-2"/>
-                            Move
+                            Cut / Move
                         </button>
                         <button
                             className="w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded flex items-center">
