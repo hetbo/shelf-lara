@@ -15,7 +15,8 @@ const DetailsPanel: React.FC = () => {
         startRename,
         clipboardItem,
         copyItem,
-        pasteItem
+        pasteItem,
+        currentFolderId
     } = useShelfStore();
 
     const currentItem = selectedFolderId
@@ -157,7 +158,7 @@ const DetailsPanel: React.FC = () => {
 
                         {clipboardItem && (
                             <button
-                                onClick={() => pasteItem(selectedFolderId)}
+                                onClick={() => pasteItem(currentFolderId)}  // Use currentFolderId instead of selectedFolderId
                                 className="w-full text-left px-2 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded flex items-center"
                             >
                                 <Icon name="clipboard" className="w-4 h-4 mr-2" />

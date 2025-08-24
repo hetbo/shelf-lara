@@ -99,6 +99,8 @@ export interface ShelfState {
     copyItem: (id: number, type: 'file', name: string) => void;
     pasteItem: (destinationFolderId: number | null) => Promise<void>;
 
+    currentFolderId: number | null;
+
     // Actions
     loadRootFolders: () => Promise<void>;
     loadFolderChildren: (folderId: number) => Promise<void>;

@@ -43,6 +43,7 @@ export const useShelfStore = create<ShelfState>()(
             isLoadingDetails: false,
             renamingItem: null,
             clipboardItem: null,
+            currentFolderId: null,
 
             // --- REFACTORED ACTIONS ---
 
@@ -122,7 +123,8 @@ export const useShelfStore = create<ShelfState>()(
                     selectedFolderId: folderId,
                     selectedFileId: null,  // Clear file selection when folder is selected
                     selectedFileDetails: null,
-                    renamingItem: null     // Cancel any ongoing rename
+                    renamingItem: null,     // Cancel any ongoing rename
+                    currentFolderId: folderId
                 });
 
                 buildBreadcrumbsFromApi(folderId);
@@ -154,7 +156,7 @@ export const useShelfStore = create<ShelfState>()(
 
 
             loadFolderContent: async (folderId: number | null) => {
-                set({ isLoadingContent: true });
+                set({ isLoadingContent: true, currentFolderId: folderId });
                 try {
                     // 5. Call the API service
                     const content = await shelfApi.fetchFolderContent(folderId);
