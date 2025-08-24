@@ -1,8 +1,14 @@
+export * from './folders/folderApi';
+export * from './files/fileApi';
+export * from './items/itemApi';
+export * from './http/httpClient';
+
+/*
 import { Folder, FolderContent, BreadcrumbItem, FolderDetails, FileDetails } from '../types/shelf';
 
 const API_BASE = '/api';
 
-/*
+/!*
 const handleResponse = async (response: Response, errorMessage: string) => {
     if (!response.ok) {
         // You could add more sophisticated error handling here, like logging the status code
@@ -10,7 +16,7 @@ const handleResponse = async (response: Response, errorMessage: string) => {
     }
     return response.json();
 };
-*/
+*!/
 
 const handleResponse = async (response: Response, defaultErrorMessage: string) => {
     if (response.ok) {
@@ -37,33 +43,33 @@ const handleResponse = async (response: Response, defaultErrorMessage: string) =
     // --- END OF NEW PART ---
 };
 
-/**
+/!**
  * Fetches the initial, top-level folders for the tree.
- */
+ *!/
 export const fetchRootFolders = (): Promise<Folder[]> => {
     return fetch(`${API_BASE}/folders/root`)
         .then(res => handleResponse(res, 'Failed to fetch root folders'));
 };
 
-/**
+/!**
  * Fetches the immediate children for a given folder ID.
- */
+ *!/
 export const fetchFolderChildren = (folderId: number): Promise<Folder[]> => {
     return fetch(`${API_BASE}/folders/${folderId}/children`)
         .then(res => handleResponse(res, 'Failed to fetch folder children'));
 };
 
-/**
+/!**
  * Fetches the breadcrumb path for a given folder ID from the server.
- */
+ *!/
 export const fetchBreadcrumbs = (folderId: number): Promise<BreadcrumbItem[]> => {
     return fetch(`${API_BASE}/folders/${folderId}/breadcrumbs`)
         .then(res => handleResponse(res, 'Failed to load breadcrumbs'));
 };
 
-/**
+/!**
  * Fetches the contents (files and subfolders) for a given folder ID, or the root.
- */
+ *!/
 export const fetchFolderContent = (folderId: number | null): Promise<FolderContent> => {
     const endpoint = folderId
         ? `${API_BASE}/folders/${folderId}/content`
@@ -73,17 +79,17 @@ export const fetchFolderContent = (folderId: number | null): Promise<FolderConte
         .then(res => handleResponse(res, 'Failed to load folder content'));
 };
 
-/**
+/!**
  * Fetches the detailed information for a specific folder.
- */
+ *!/
 export const fetchFolderDetails = (folderId: number): Promise<FolderDetails> => {
     return fetch(`${API_BASE}/folders/${folderId}/details`)
         .then(res => handleResponse(res, 'Failed to load folder details'));
 };
 
-/**
+/!**
  * Fetches the detailed information for a specific file.
- */
+ *!/
 export const fetchFileDetails = (fileId: number): Promise<FileDetails> => {
     return fetch(`${API_BASE}/files/${fileId}/details`)
         .then(res => handleResponse(res, 'Failed to load file details'));
@@ -167,3 +173,4 @@ export const copyFolder = (folderId: number, destinationFolderId: number | null)
         }),
     }).then(res => handleResponse(res, 'Failed to copy folder'));
 };
+*/

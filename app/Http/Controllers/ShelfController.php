@@ -70,6 +70,22 @@ class ShelfController extends Controller {
                 }
 
                 $file->folder_id = $destinationId;
+
+                $baseName = pathinfo($file->filename, PATHINFO_FILENAME);
+                $extension = pathinfo($file->filename, PATHINFO_EXTENSION);
+                $counter = 1;
+                $finalFilename = $file->filename;
+
+                while (File::where('folder_id', $destinationId)
+                    ->where('filename', $finalFilename)
+                    ->where('id', '!=', $file->id) // Exclude the file we just created
+                    ->exists()) {
+                    $finalFilename = $baseName . " (Copy " . $counter . ")" . ($extension ? ".$extension" : "");
+                    $counter++;
+                }
+                $file->filename = $finalFilename;
+
+
                 $file->save();
 
             } elseif ($type === 'folder') {
