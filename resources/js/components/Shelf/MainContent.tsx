@@ -1,5 +1,3 @@
-// resources/js/components/Shelf/MainContent.tsx
-
 import React from 'react';
 import { useShelfStore } from '../../store/shelf';
 import { Folder, File } from '../../types/shelf';

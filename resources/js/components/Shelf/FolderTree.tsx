@@ -1,5 +1,3 @@
-// resources/js/components/Shelf/FolderTree.tsx
-
 import React, { useEffect } from 'react';
 import { useShelfStore } from '../../store/shelf';
 import { Folder } from '../../types/shelf';
@@ -20,7 +18,6 @@ const FolderTreeItem: React.FC<FolderTreeItemProps> = ({ folder, level }) => {
 
     const isExpanded = expandedFolders.has(folder.id);
     const isSelected = selectedFolderId === folder.id;
-//    const hasChildren = folder.children && folder.children.length > 0;
     const hasChildren = folder.has_children;
 
     const handleToggleExpansion = (e: React.MouseEvent) => {

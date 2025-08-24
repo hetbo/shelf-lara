@@ -51,6 +51,20 @@ class FileController extends Controller
         }
     }
 
+    public function getDetails(File $file)
+    {
+        $extension = pathinfo($file->filename, PATHINFO_EXTENSION);
+
+        return response()->json([
+            'id' => $file->id,
+            'name' => $file->filename,
+            'extension' => $extension ?: 'File',
+            'size' => $file->size,
+            'createdAt' => $file->created_at->toISOString(),
+            'modifiedAt' => $file->updated_at->toISOString(),
+        ]);
+    }
+
     // Future methods (commented out for now)
 
     /*

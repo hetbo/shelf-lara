@@ -1,11 +1,15 @@
-// resources/js/components/Shelf/DetailsPanel.tsx
-
 import React from 'react';
 import { useShelfStore } from '../../store/shelf';
 import Icon from '../../icons/Icon';
 
 const DetailsPanel: React.FC = () => {
-    const { selectedFolderId, selectedFileId } = useShelfStore();
+    const {
+        selectedFolderId,
+        selectedFileId,
+        selectedFolderDetails,
+        selectedFileDetails,
+        isLoadingDetails
+    } = useShelfStore();
 
     if (!selectedFolderId && !selectedFileId) {
         return (
@@ -27,6 +31,82 @@ const DetailsPanel: React.FC = () => {
                     Properties
                 </h3>
 
+                {isLoadingDetails ? (
+                    <div className="text-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                        <p className="text-sm text-gray-500">Loading details...</p>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        <div className="text-center mb-6">
+                            <div className="w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-lg flex items-center justify-center">
+                                <Icon
+                                    name={selectedFolderId ? "folder" : "file"}
+                                    className="w-8 h-8 text-gray-600"
+                                />
+                            </div>
+                            <p className="text-sm font-medium text-gray-800">
+                                {(selectedFolderId ? selectedFolderDetails?.name : selectedFileDetails?.name) || (selectedFolderId ? "Folder" : "File")}
+                            </p>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                                    Name
+                                </label>
+                                <p className="text-sm text-gray-800">
+                                    {(selectedFolderId ? selectedFolderDetails?.name : selectedFileDetails?.name) || '-'}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                                    Type
+                                </label>
+                                <p className="text-sm text-gray-800">
+                                    {selectedFolderId ? "Folder" : (selectedFileDetails?.extension || "File")}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                                    Size
+                                </label>
+                                <p className="text-sm text-gray-800">
+                                    {selectedFolderId
+                                        ? `${selectedFolderDetails?.itemCount || 0} items`
+                                        : selectedFileDetails?.size ? formatSize(selectedFileDetails.size) : '-'
+                                    }
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                                    Modified
+                                </label>
+                                <p className="text-sm text-gray-800">
+                                    {(selectedFolderId ? selectedFolderDetails?.modifiedAt : selectedFileDetails?.modifiedAt)
+                                        ? formatDate(selectedFolderId ? selectedFolderDetails!.modifiedAt : selectedFileDetails!.modifiedAt)
+                                        : '-'}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                                    Created
+                                </label>
+                                <p className="text-sm text-gray-800">
+                                    {(selectedFolderId ? selectedFolderDetails?.createdAt : selectedFileDetails?.createdAt)
+                                        ? formatDate(selectedFolderId ? selectedFolderDetails!.createdAt : selectedFileDetails!.createdAt)
+                                        : '-'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+{/*
                 <div className="space-y-4">
                     <div className="text-center mb-6">
                         <div className="w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -40,7 +120,7 @@ const DetailsPanel: React.FC = () => {
                         </p>
                     </div>
 
-                    {/* Placeholder content */}
+                     Placeholder content
                     <div className="space-y-3">
                         <div>
                             <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
@@ -80,6 +160,7 @@ const DetailsPanel: React.FC = () => {
                         </div>
                     </div>
                 </div>
+*/}
 
                 <div className="mt-6 pt-4 border-t border-gray-200">
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
@@ -109,4 +190,15 @@ const DetailsPanel: React.FC = () => {
     );
 };
 
+const formatSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleString();
+};
 export default DetailsPanel;

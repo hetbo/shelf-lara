@@ -20,6 +20,7 @@ Route::prefix('api')->middleware(['web'])->group(function () {
         Route::get('/{folder}/children', [FolderController::class, 'getChildren'])->name('api.folders.children');
         Route::get('/{folder}/content', [FolderController::class, 'getContent'])->name('api.folders.content');
         Route::get('/{folder}/breadcrumbs', [FolderController::class, 'getBreadcrumbs'])->name('api.folders.breadcrumbs');
+        Route::get('/{folder}/details', [FolderController::class, 'getDetails']);
 
         // Future routes (commented out for now)
         // Route::post('/', [FolderController::class, 'store'])->name('api.folders.store');
@@ -30,6 +31,7 @@ Route::prefix('api')->middleware(['web'])->group(function () {
     // File Routes
     Route::prefix('files')->group(function () {
         Route::get('/{file}', [FileController::class, 'show'])->name('api.files.show');
+        Route::get('/{file}/details', [FileController::class, 'getDetails']);
 
         // Future routes (commented out for now)
         // Route::post('/upload', [FileController::class, 'upload'])->name('api.files.upload');
@@ -37,6 +39,5 @@ Route::prefix('api')->middleware(['web'])->group(function () {
         // Route::delete('/{file}', [FileController::class, 'destroy'])->name('api.files.destroy');
         // Route::get('/{file}/download', [FileController::class, 'download'])->name('api.files.download');
     });
-
 
 });

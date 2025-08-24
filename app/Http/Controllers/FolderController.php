@@ -219,4 +219,18 @@ class FolderController extends Controller
             return response()->json(['error' => 'Failed to load breadcrumbs'], 500);
         }
     }
+
+    public function getDetails(Folder $folder)
+    {
+        $itemCount = $folder->children()->count() + $folder->files()->count();
+
+        return response()->json([
+            'id' => $folder->id,
+            'name' => $folder->name,
+            'itemCount' => $itemCount,
+            'createdAt' => $folder->created_at->toISOString(),
+            'modifiedAt' => $folder->updated_at->toISOString(),
+        ]);
+    }
+
 }

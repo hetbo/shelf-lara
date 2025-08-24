@@ -34,6 +34,9 @@ export const useShelfStore = create<ShelfState>()(
             breadcrumbs: [{ id: null, name: 'Root', type: 'folder' }],
             isLoadingFolders: false,
             isLoadingContent: false,
+            selectedFolderDetails: null,
+            selectedFileDetails: null,
+            isLoadingDetails: false,
 
             // Load root folders
             loadRootFolders: async () => {
@@ -114,20 +117,7 @@ export const useShelfStore = create<ShelfState>()(
                 }
             },
 
-
-            // Select folder
 /*            selectFolder: (folderId: number | null) => {
-                const { rootFolders, loadFolderContent } = get();
-
-                set({
-                    selectedFolderId: folderId,
-                    selectedFileId: null,
-                    breadcrumbs: buildBreadcrumbs(folderId, rootFolders)
-                });
-
-                loadFolderContent(folderId);
-            }*/
-            selectFolder: (folderId: number | null) => {
                 const { loadFolderContent, buildBreadcrumbsFromApi } = get();
 
                 set({
@@ -144,6 +134,42 @@ export const useShelfStore = create<ShelfState>()(
                 set({
                     selectedFileId: fileId
                 });
+            },*/
+            // Replace the selectFolder method with:
+            selectFolder: (folderId: number | null) => {
+                const { loadFolderContent, buildBreadcrumbsFromApi, loadFolderDetails } = get();
+
+                set({
+                    selectedFolderId: folderId,
+                    selectedFileId: null,
+                    selectedFileDetails: null
+                });
+
+                buildBreadcrumbsFromApi(folderId);
+                loadFolderContent(folderId);
+
+                if (folderId) {
+                    loadFolderDetails(folderId);
+                } else {
+                    set({ selectedFolderDetails: null });
+                }
+            },
+
+// Replace the selectFile method with:
+            selectFile: (fileId: number | null) => {
+                const { loadFileDetails } = get();
+
+                set({
+                    selectedFileId: fileId,
+                    selectedFolderId: null,
+                    selectedFolderDetails: null
+                });
+
+                if (fileId) {
+                    loadFileDetails(fileId);
+                } else {
+                    set({ selectedFileDetails: null });
+                }
             },
 
             // Load folder content
@@ -167,6 +193,31 @@ export const useShelfStore = create<ShelfState>()(
                         currentFolderContent: { folders: [], files: [] },
                         isLoadingContent: false
                     });
+                }
+            },
+            // Load folder details
+            loadFolderDetails: async (folderId: number) => {
+                set({ isLoadingDetails: true, selectedFileDetails: null });
+                try {
+                    const response = await fetch(`${API_BASE}/folders/${folderId}/details`);
+                    const folderDetails = await response.json();
+                    set({ selectedFolderDetails: folderDetails, isLoadingDetails: false });
+                } catch (error) {
+                    console.error('Failed to load folder details:', error);
+                    set({ selectedFolderDetails: null, isLoadingDetails: false });
+                }
+            },
+
+// Load file details
+            loadFileDetails: async (fileId: number) => {
+                set({ isLoadingDetails: true, selectedFolderDetails: null });
+                try {
+                    const response = await fetch(`${API_BASE}/files/${fileId}/details`);
+                    const fileDetails = await response.json();
+                    set({ selectedFileDetails: fileDetails, isLoadingDetails: false });
+                } catch (error) {
+                    console.error('Failed to load file details:', error);
+                    set({ selectedFileDetails: null, isLoadingDetails: false });
                 }
             },
         })

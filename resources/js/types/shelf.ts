@@ -1,4 +1,19 @@
-// resources/js/types/shelf.ts
+export interface FolderDetails {
+    id: number;
+    name: string;
+    itemCount: number;
+    createdAt: string;
+    modifiedAt: string;
+}
+
+export interface FileDetails {
+    id: number;
+    name: string;
+    extension: string;
+    size: number;
+    createdAt: string;
+    modifiedAt: string;
+}
 
 export interface Folder {
     id: number;
@@ -74,6 +89,10 @@ export interface ShelfState {
     isLoadingFolders: boolean;
     isLoadingContent: boolean;
 
+    selectedFolderDetails: FolderDetails | null;
+    selectedFileDetails: FileDetails | null;
+    isLoadingDetails: boolean;
+
     // Actions
     loadRootFolders: () => Promise<void>;
     loadFolderChildren: (folderId: number) => Promise<void>;
@@ -82,4 +101,6 @@ export interface ShelfState {
     toggleFolderExpansion: (folderId: number) => void;
     loadFolderContent: (folderId: number | null) => Promise<void>;
     buildBreadcrumbsFromApi: (folderId: number | null) => Promise<void>;
+    loadFolderDetails: (folderId: number) => Promise<void>;
+    loadFileDetails: (fileId: number) => Promise<void>;
 }
