@@ -93,6 +93,8 @@ export interface ShelfState {
     selectedFileDetails: FileDetails | null;
     isLoadingDetails: boolean;
 
+    renamingItem: { id: number; type: 'file' | 'folder' } | null;
+
     // Actions
     loadRootFolders: () => Promise<void>;
     loadFolderChildren: (folderId: number) => Promise<void>;
@@ -103,4 +105,8 @@ export interface ShelfState {
     buildBreadcrumbsFromApi: (folderId: number | null) => Promise<void>;
     loadFolderDetails: (folderId: number) => Promise<void>;
     loadFileDetails: (fileId: number) => Promise<void>;
+
+    startRename: (item: { id: number; type: 'file' | 'folder' }) => void;
+    cancelRename: () => void;
+    confirmRename: (newName: string) => Promise<void>;
 }
