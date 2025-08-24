@@ -1,7 +1,4 @@
-// resources/js/stores/shelf.ts
-
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
 import { ShelfState, Folder, File, FolderContent, BreadcrumbItem } from '../types/shelf';
 
 const API_BASE = '/api';
@@ -25,42 +22,8 @@ const insertFolderChildren = (folders: Folder[], parentId: number, children: Fol
     });
 };
 
-// Helper function to build breadcrumbs
-const buildBreadcrumbs = (folderId: number | null, folders: Folder[]): BreadcrumbItem[] => {
-    if (!folderId) {
-        return [{ id: null, name: 'Root', type: 'folder' }];
-    }
-
-    const breadcrumbs: BreadcrumbItem[] = [];
-
-    const findFolderPath = (folders: Folder[], targetId: number, path: Folder[] = []): Folder[] | null => {
-        for (const folder of folders) {
-            const currentPath = [...path, folder];
-            if (folder.id === targetId) {
-                return currentPath;
-            }
-            if (folder.children) {
-                const result = findFolderPath(folder.children, targetId, currentPath);
-                if (result) return result;
-            }
-        }
-        return null;
-    };
-
-    const path = findFolderPath(folders, folderId);
-    if (path) {
-        breadcrumbs.push({ id: null, name: 'Root', type: 'folder' });
-        path.forEach(folder => {
-            breadcrumbs.push({ id: folder.id, name: folder.name, type: 'folder' });
-        });
-    }
-
-    return breadcrumbs;
-};
-
 
 export const useShelfStore = create<ShelfState>()(
-    devtools(
         (set, get) => ({
             // Initial State
             rootFolders: [],
@@ -206,8 +169,5 @@ export const useShelfStore = create<ShelfState>()(
                     });
                 }
             },
-            // Add this method in the store actions:
-        }),
-        { name: 'shelf-store' }
-    )
+        })
 );
