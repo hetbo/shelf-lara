@@ -148,3 +148,22 @@ export const moveItem = (
         }),
     }).then(res => handleResponse(res, `Failed to move ${type}`));
 };
+
+
+export const copyFolder = (folderId: number, destinationFolderId: number | null): Promise<void> => {
+    const csrfMeta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
+    const csrfToken = csrfMeta?.getAttribute('content') ?? '';
+
+    return fetch(`${API_BASE}/folders/copy`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+        },
+        body: JSON.stringify({
+            folderId,
+            destinationFolderId
+        }),
+    }).then(res => handleResponse(res, 'Failed to copy folder'));
+};

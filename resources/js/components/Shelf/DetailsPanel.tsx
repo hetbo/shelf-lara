@@ -147,11 +147,20 @@ const DetailsPanel: React.FC = () => {
                             Rename
                         </button>
                         <button
-                            onClick={() => selectedFileId && selectedFileDetails && copyItem(selectedFileId, 'file', selectedFileDetails.name)}
-                            disabled={!selectedFileId}
+                            onClick={() => {
+                                // This logic now checks for either a selected file OR a selected folder
+                                if (selectedFileId && selectedFileDetails) {
+                                    copyItem(selectedFileId, 'file', selectedFileDetails.name);
+                                } else if (selectedFolderId && selectedFolderDetails) {
+                                    copyItem(selectedFolderId, 'folder', selectedFolderDetails.name);
+                                }
+                            }}
+                            // The button is now disabled only if NEITHER a file NOR a folder is selected
+                            disabled={!selectedFileId && !selectedFolderId}
                             className={`w-full text-left px-2 py-1 text-sm rounded flex items-center ${
-                                selectedFileId ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
+                                (selectedFileId || selectedFolderId) ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
                             }`}
+                            title="Copy item to clipboard"
                         >
                             <Icon name="copy" className="w-4 h-4 mr-2"/>
                             Copy
