@@ -102,5 +102,21 @@ export const createFolderActions = (set: any, get: () => ShelfState) => ({
             console.error(error);
             set({selectedFileDetails: null, isLoadingDetails: false});
         }
-    }
+    },
+
+    expandFolderPath: async (folderId: number) => {
+        const {breadcrumbs, expandedFolders, loadFolderChildren} = get();
+        const newExpanded = new Set(expandedFolders);
+
+        for (const breadcrumb of breadcrumbs) {
+            if (breadcrumb.id && breadcrumb.id !== folderId) {
+                if (!newExpanded.has(breadcrumb.id)) {
+                    newExpanded.add(breadcrumb.id);
+                    await loadFolderChildren(breadcrumb.id);
+                }
+            }
+        }
+
+        set({expandedFolders: newExpanded});
+    },
 });

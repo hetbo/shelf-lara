@@ -1,8 +1,8 @@
 import {ShelfState} from '../../types/shelf';
 
 export const createSelectionActions = (set: any, get: () => ShelfState) => ({
-    selectFolder: (folderId: number | null) => {
-        const {loadFolderContent, buildBreadcrumbsFromApi, loadFolderDetails} = get();
+    selectFolder: async (folderId: number | null) => {
+        const {loadFolderContent, buildBreadcrumbsFromApi, loadFolderDetails, expandFolderPath} = get();
 
         set({
             selectedFolderId: folderId,
@@ -17,6 +17,7 @@ export const createSelectionActions = (set: any, get: () => ShelfState) => ({
 
         if (folderId) {
             loadFolderDetails(folderId);
+            await expandFolderPath(folderId);
         } else {
             set({selectedFolderDetails: null});
         }

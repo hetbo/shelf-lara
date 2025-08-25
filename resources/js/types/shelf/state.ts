@@ -23,7 +23,7 @@ export interface ShelfState {
     currentFolderId: number | null;
     loadRootFolders: () => Promise<void>;
     loadFolderChildren: (folderId: number) => Promise<void>;
-    selectFolder: (folderId: number | null) => void;
+    selectFolder: (folderId: number | null) => Promise<void>;
     selectFile: (fileId: number | null) => void;
     toggleFolderExpansion: (folderId: number) => void;
     loadFolderContent: (folderId: number | null) => Promise<void>;
@@ -35,4 +35,5 @@ export interface ShelfState {
     confirmRename: (newName: string) => Promise<void>;
     clearClipboard: () => void;
     deleteItem: (item: { id: number; type: 'file' | 'folder' }) => Promise<void>;
+    expandFolderPath: (folderId: number) => Promise<void>;
 }
