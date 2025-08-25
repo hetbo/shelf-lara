@@ -1,4 +1,3 @@
-// Import each SVG and immediately export it with a clean name.
 export { default as home} from '../../svg/home.svg?react';
 export { default as folder } from '../../svg/folder.svg?react';
 export { default as chevronRight } from '../../svg/chevron-right.svg?react';

@@ -1,5 +1,3 @@
-// resources/js/components/Shelf/StatusBar.tsx
-
 import React from 'react';
 import { useShelfStore } from '../../store/shelf';
 

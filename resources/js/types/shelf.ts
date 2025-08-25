@@ -1,3 +1,9 @@
+export * from './shelf/entities';
+export * from './shelf/details';
+export * from './shelf/navigation';
+export * from './shelf/operations';
+export * from './shelf/state';
+/*
 export interface FolderDetails {
     id: number;
     name: string;
@@ -128,3 +134,4 @@ export interface ShelfState {
     deleteItem: (item: { id: number; type: 'file' | 'folder' }) => Promise<void>;
 
 }
+*/

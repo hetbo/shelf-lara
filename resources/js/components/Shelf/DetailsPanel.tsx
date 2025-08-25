@@ -149,14 +149,12 @@ const DetailsPanel: React.FC = () => {
                         </button>
                         <button
                             onClick={() => {
-                                // This logic now checks for either a selected file OR a selected folder
                                 if (selectedFileId && selectedFileDetails) {
                                     copyItem(selectedFileId, 'file', selectedFileDetails.name);
                                 } else if (selectedFolderId && selectedFolderDetails) {
                                     copyItem(selectedFolderId, 'folder', selectedFolderDetails.name);
                                 }
                             }}
-                            // The button is now disabled only if NEITHER a file NOR a folder is selected
                             disabled={!selectedFileId && !selectedFolderId}
                             className={`w-full text-left px-2 py-1 text-sm rounded flex items-center ${
                                 (selectedFileId || selectedFolderId) ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
@@ -178,14 +176,12 @@ const DetailsPanel: React.FC = () => {
                         )}
                         <button
                             onClick={() => {
-                                // This logic now checks for either a selected file OR a selected folder
                                 if (selectedFileId && selectedFileDetails) {
                                     cutItem(selectedFileId, 'file', selectedFileDetails.name);
                                 } else if (selectedFolderId && selectedFolderDetails) {
                                     cutItem(selectedFolderId, 'folder', selectedFolderDetails.name);
                                 }
                             }}
-                            // The button is now disabled only if NEITHER a file NOR a folder is selected
                             disabled={!selectedFileId && !selectedFolderId}
                             className={`w-full text-left px-2 py-1 text-sm rounded flex items-center ${
                                 (selectedFileId || selectedFolderId) ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 cursor-not-allowed'
@@ -196,9 +192,7 @@ const DetailsPanel: React.FC = () => {
                             Cut / Move
                         </button>
                         <button
-                            // --- ADD THIS ONCLICK HANDLER ---
                             onClick={() => {
-                                // 1. Ask for confirmation
                                 if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
                                     if (selectedFileId) {
                                         deleteItem({id: selectedFileId, type: 'file'});
@@ -207,7 +201,6 @@ const DetailsPanel: React.FC = () => {
                                     }
                                 }
                             }}
-                            // --- ADD A DISABLED CHECK ---
                             disabled={!selectedFileId && !selectedFolderId}
                             className={`w-full text-left px-2 py-1 text-sm rounded flex items-center ${
                                 (selectedFileId || selectedFolderId)

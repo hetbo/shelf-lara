@@ -35,8 +35,6 @@ export const ApiErrorHandler = () => {
         }, 300); // Animation duration
     };
 
-    // --- PURE CSS ANIMATION DEFINED HERE ---
-    // This is the simplest way to add a one-off animation without touching config files.
     const animationStyle = `
         @keyframes fadeInRight {
             from { opacity: 0; transform: translateX(20px); }
@@ -56,12 +54,10 @@ export const ApiErrorHandler = () => {
 
     return (
         <>
-            {/* The <style> tag injects our CSS keyframes directly into the document head */}
             <style>{animationStyle}</style>
 
             <div className="fixed top-4 right-4 z-50 w-80">
                 <div
-                    // We apply our custom animation classes instead of Tailwind's
                     className={`
                         flex items-center bg-red-500 text-white p-3 rounded-lg shadow-lg
                         ${isExiting ? 'animate-exit' : 'animate-enter'}

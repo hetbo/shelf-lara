@@ -1,5 +1,3 @@
-// resources/js/components/Shelf/Breadcrumbs.tsx
-
 import React from 'react';
 import { useShelfStore } from '../../store/shelf';
 import Icon from '../../icons/Icon';
